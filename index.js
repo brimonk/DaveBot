@@ -69,7 +69,6 @@ function nextCronDate(str) {
 
     do {
         date.setTime(date.getTime() + (60 * 1000));
-        console.log("looping");
     } while (!datePassCron(date, cron));
 
     date.setSeconds(0);
