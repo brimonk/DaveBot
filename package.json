@@ -1,14 +1,17 @@
 {
-  "name": "davebot",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "Brian Chrzanowski",
-  "license": "ISC",
-  "dependencies": {
-    "discord.js": "^13.6.0"
-  }
+    "name": "davebot",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "author": "Brian Chrzanowski",
+    "license": "ISC",
+    "engines": {
+        "node": ">=17.4.0"
+    },
+    "dependencies": {
+        "discord.js": "^13.6.0"
+    }
 }
