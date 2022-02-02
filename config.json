@@ -1,0 +1,22 @@
+{
+    "commands": [
+        {
+            "serverid": "229062473074999307",
+            "channelid": "938477920475828234",
+            "description": "TEST - Fish Gaming Wednesday",
+            "fn": "message",
+            "args": ["@everyone It's fish gaming wednesday! https://youtu.be/CMjdxUZeXj4"],
+            "cron": "0 0 * * 3"
+        },
+        {
+            "serverid": "934242386161307739",
+            "channelid": "934242386622677085",
+            "description": "Fish Gaming Wednesday",
+            "fn": "message",
+            "args": ["@everyone IT'S FISH GAMING WEDNESDAY! https://youtu.be/CMjdxUZeXj4"],
+            "cron": "0 0 * * 3"
+        }
+    ],
+    "filler": [
+    ]
+}
