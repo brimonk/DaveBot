@@ -3,7 +3,13 @@ const config = require("./config.json");
 
 const client = new Discord.Client({intents: ["GUILDS", "GUILD_MESSAGES"]});
 
-client.login(config.BOT_TOKEN);
+const token = process.env.BOT_TOKEN;
+if (token === null || token === undefined) {
+    console.error("I didn't find a 'BOT_TOKEN' env var. You must set this variable so the bot can connect to Discord!");
+    process.exit(1);
+}
+
+client.login(token);
 
 const prefix = "!";
 
@@ -28,30 +34,48 @@ function nextCronDate(str) {
     const date = new Date();
 
     const datePassCron = (d, cron) => {
-        if (cron.month !== "*" && d.getMonth() !== cron.month)
-            return false;
+        if (cron.minute !== "*") {
+            if (d.getMinutes() !== cron.minute) {
+                return false;
+            }
+        }
 
-        if (cron.date !== "*" && d.getDate() !== cron.date)
-            return false;
+        if (cron.hour !== "*") {
+            if (d.getHours() !== cron.hour) {
+                return false;
+            }
+        }
 
-        if (cron.day !== "*" && d.getDay() !== cron.day)
-            return false;
+        if (cron.day !== "*") {
+            if (d.getDate() !== cron.day ) {
+                return false;
+            }
+        }
 
-        if (cron.hour !== "*" && d.getHour() !== cron.hour)
-            return false;
+        if (cron.month !== "*") {
+            if (d.getMonth() !== cron.month) {
+                return false;
+            }
+        }
 
-        if (cron.minutes !== "*" && d.getMinutes() !== cron.minutes)
-            return false;
+        if (cron.weekday !== "*") {
+            if (d.getDay() !== cron.weekday) {
+                return false;
+            }
+        }
 
         return true;
     };
 
     do {
         date.setTime(date.getTime() + (60 * 1000));
-    } while (datePassCron(date, cron));
+        console.log("looping");
+    } while (!datePassCron(date, cron));
 
     date.setSeconds(0);
     date.setMilliseconds(0);
+
+    console.log(`next date: '${date}'`);
 
     return date;
 }
@@ -104,12 +128,19 @@ async function setupCommand(command) {
     let promise = null;
 
     const dofunc = () => {
-        func(command.serverid, command.channelid, command.args);
-        promise.delay(dofunc, getDelay());
+        const delayms = getDelay();
+        console.log(delayms);
+
+        if (promise === null) {
+            promise = delay(delayms);
+            promise.then(dofunc);
+        } else {
+            func(command.serverid, command.channelid, command.args);
+            promise.delay(dofunc, delayms);
+        }
     };
 
-    promise = delay(getDelay());;
-    promise.then(dofunc());
+    dofunc();
 }
 
 function messageCreateHandler(message) {
