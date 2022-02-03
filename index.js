@@ -79,39 +79,18 @@ function nextCronDate(str) {
     return date;
 }
 
-function delay(t) {
-    return new Promise(function (resolve) {
-        setTimeout(resolve, t);
-    });
-}
-
-Promise.delay = function(fn, t) {
-    if (!t) {
-        t = fn;
-        fn = function() {};
-    }
-
-    return delay(t).then(fn);
-}
-
-Promise.prototype.delay = function(fn, t) {
-    return this.then(function() {
-        return Promise.delay(fn, t);
-    });
-}
-
 // fnMessage : the function to send a message
 async function fnMessage(server, channel, args) {
     const ch = await client.channels.fetch(channel);
     if (ch === null) {
         console.error(`ERR: '${e.name}' could not be found.`);
     } else {
-        ch.send(args.join(" "));
+        await ch.send(args.join(" "));
     }
 }
 
 // setupCommand : sets up a single command
-async function setupCommand(command) {
+function setupCommand(command) {
     const funcs = {
         message: fnMessage
     };
@@ -124,22 +103,19 @@ async function setupCommand(command) {
 
     const getDelay = () => nextCronDate(command.cron).getTime() - Date.now();
 
-    let promise = null;
-
-    const dofunc = () => {
+    const dofunc = async () => {
         const delayms = getDelay();
         console.log(delayms);
-
-        if (promise === null) {
-            promise = delay(delayms);
-            promise.then(dofunc);
-        } else {
-            func(command.serverid, command.channelid, command.args);
-            promise.delay(dofunc, delayms);
+        
+        try {
+            await func(command.serverid, command.channelid, command.args);
+        } catch(e) {
+            console.error(e);
         }
+        setTimeout(dofunc, delayms);
     };
 
-    dofunc();
+    setTimeout(dofunc, getDelay());
 }
 
 function messageCreateHandler(message) {
@@ -159,10 +135,8 @@ function messageCreateHandler(message) {
     }
 }
 
-async function asyncmain() {
-    config.commands.map(async (e) => {
-        await setupCommand(e);
-    });
+function main() {
+    config.commands.forEach(setupCommand);
 
     // const duration = nextWednesday() - new Date();
     // console.log(`waiting ${duration}ms`);
@@ -171,5 +145,5 @@ async function asyncmain() {
     client.on("messageCreate", messageCreateHandler);
 }
 
-client.once("ready", asyncmain);
+client.once("ready", main);
 
