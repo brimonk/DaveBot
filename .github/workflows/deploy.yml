@@ -23,7 +23,6 @@ jobs:
                       echo "export BOT_TOKEN=${{secrets.BOT_TOKEN}}" > tokenset.sh
                       chmod +x tokenset.sh
                       . tokenset.sh
-                      node index.js
                       popd
                       sudo service davebot start
 
