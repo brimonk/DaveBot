@@ -15,5 +15,5 @@ jobs:
           username: ${{secrets.SSH_USER}}
 
   script: |
-    echo "hello world, " $(date) > testfile
+    echo "hello world"
 
