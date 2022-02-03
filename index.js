@@ -160,9 +160,7 @@ function messageCreateHandler(message) {
 }
 
 async function asyncmain() {
-    config.commands.map(async (e) => {
-        await setupCommand(e);
-    });
+    await Promise.all(config.commands.map(setupCommand));
 
     // const duration = nextWednesday() - new Date();
     // console.log(`waiting ${duration}ms`);
