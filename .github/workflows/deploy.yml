@@ -15,5 +15,15 @@ jobs:
                   username: ${{secrets.SSH_USER}}
 
                   script: |
-                      echo "hello world"
+                      sudo service davebot stop
+                      rm -rf ~/davebot
+                      git clone https://github.com/brimonk/DaveBot.git davebot
+                      pushd davebot
+                      npm i
+                      echo "export BOT_TOKEN=${{secrets.BOT_TOKEN}}" > tokenset.sh
+                      chmod +x tokenset.sh
+                      . tokenset.sh
+                      node index.js
+                      popd
+                      sudo service davebot start
 
